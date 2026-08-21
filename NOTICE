@@ -1,0 +1,17 @@
+nativum
+Copyright 2026 Haru
+
+This product is an independent original work. It is inspired by the architecture
+of the Native SDK (https://github.com/vercel-labs/native) published by Vercel
+Labs under Apache-2.0: declarative markup views, a Model/Msg/update loop, and
+a toolkit-owned renderer that draws into real pixels without a browser or
+WebView.
+
+nativum is not affiliated with, endorsed by, or derived from the Native SDK
+source code. The markup dialect implemented here is a compatible-in-spirit
+subset designed so authors familiar with Native SDK views can read and write
+`.native` files, not a line-for-line clone of that project's grammar or engine.
+
+The bundled 8x8 bitmap glyphs for U+0000..U+007F are the public-domain
+font8x8_basic map by Marcel Sondaar / IBM VGA fonts, packaged by Daniel Hepper
+(https://github.com/dhepper/font8x8).
