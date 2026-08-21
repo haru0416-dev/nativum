@@ -16,7 +16,7 @@ use crate::manifest::{LoadedApp, WindowSpec};
 use crate::paint::{paint, Surface};
 use crate::png::encode_png;
 use crate::snapshot::SnapshotNode;
-use crate::widget::Widget;
+use crate::widget::{Widget, WidgetKind};
 
 /// One painted frame plus the tree that produced it.
 pub struct Frame {
@@ -131,6 +131,18 @@ impl Session {
     pub fn set_appearance(&mut self, appearance: Appearance) -> Result<()> {
         self.appearance = appearance;
         self.tokens = tokens_for(appearance);
+        self.rebuild()
+    }
+
+    /// Resize the logical window and relayout.
+    pub fn resize(&mut self, width: f32, height: f32) -> Result<()> {
+        let width = width.max(1.0);
+        let height = height.max(1.0);
+        if (self.window.width - width).abs() < 0.5 && (self.window.height - height).abs() < 0.5 {
+            return Ok(());
+        }
+        self.window.width = width;
+        self.window.height = height;
         self.rebuild()
     }
 
@@ -260,22 +272,83 @@ impl Session {
         Ok(true)
     }
 
-    /// Handle a key. App-level `core.keys` runs when no field consumes it.
+    /// Handle a key. A focused text field eats printable keys and Backspace.
+    /// Otherwise `core.keys` runs, then Enter submits the first field.
     pub fn key(&mut self, key: &str) -> Result<bool> {
+        let field_focused = self
+            .root
+            .as_ref()
+            .is_some_and(|root| focused_field(root, self.focused).is_some());
+        if field_focused {
+            if key == "Backspace" {
+                return self.edit_field(|s| {
+                    s.pop();
+                });
+            }
+            if key == "Enter" {
+                return self.submit_focused();
+            }
+            if is_printable(key) {
+                return self.edit_field(|s| s.push_str(key));
+            }
+        }
         if let Some(kind) = self.core.keys.get(key).cloned() {
             return self.press_kind(&kind, None);
         }
         if key == "Enter" {
-            let handler = self
-                .root
-                .as_ref()
-                .and_then(|root| first_field(root).and_then(|field| field.on_submit.clone()));
-            if let Some(h) = handler {
-                self.dispatch(Message::plain(h.kind))?;
-                return Ok(true);
-            }
+            return self.submit_focused();
+        }
+        if key == "Backspace" {
+            return self.edit_field(|s| {
+                s.pop();
+            });
+        }
+        if is_printable(key) {
+            return self.edit_field(|s| s.push_str(key));
         }
         Ok(false)
+    }
+
+    /// Append `text` to the focused or first text field (replacement-style on-input).
+    pub fn type_append(&mut self, text: &str) -> Result<bool> {
+        self.edit_field(|s| s.push_str(text))
+    }
+
+    fn edit_field(&mut self, f: impl FnOnce(&mut String)) -> Result<bool> {
+        let (kind, mut text) = {
+            let Some(root) = self.root.as_ref() else {
+                return Ok(false);
+            };
+            let field = focused_field(root, self.focused).or_else(|| first_field(root));
+            let Some(field) = field else {
+                return Ok(false);
+            };
+            let Some(h) = field.on_input.clone() else {
+                return Ok(false);
+            };
+            (h.kind, field.text.clone())
+        };
+        f(&mut text);
+        self.dispatch(Message {
+            kind,
+            payload: Some(Value::String(text)),
+        })?;
+        Ok(true)
+    }
+
+    fn submit_focused(&mut self) -> Result<bool> {
+        let handler = {
+            let Some(root) = self.root.as_ref() else {
+                return Ok(false);
+            };
+            let field = focused_field(root, self.focused).or_else(|| first_field(root));
+            field.and_then(|field| field.on_submit.clone())
+        };
+        let Some(h) = handler else {
+            return Ok(false);
+        };
+        self.dispatch(Message::plain(h.kind))?;
+        Ok(true)
     }
 
     /// Run a journal of steps.
@@ -360,6 +433,20 @@ fn find_id(root: &Widget, id: u64) -> Option<&Widget> {
     None
 }
 
+fn focused_field(root: &Widget, focused: Option<u64>) -> Option<&Widget> {
+    let id = focused?;
+    let w = find_id(root, id)?;
+    matches!(w.kind, WidgetKind::TextField).then_some(w)
+}
+
+fn is_printable(key: &str) -> bool {
+    let mut chars = key.chars();
+    match (chars.next(), chars.next()) {
+        (Some(c), None) => !c.is_control(),
+        _ => false,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -405,5 +492,35 @@ mod tests {
         let png = s.png().unwrap();
         assert!(png.len() > 100);
         assert_eq!(&png[..8], &[137, 80, 78, 71, 13, 10, 26, 10]);
+    }
+
+    #[test]
+    fn resize_changes_window() {
+        let mut s = counter();
+        s.resize(640.0, 480.0).unwrap();
+        assert_eq!(s.window.width, 640.0);
+        assert_eq!(s.window.height, 480.0);
+        let frame = s.frame().unwrap();
+        assert_eq!(frame.surface.width, 640);
+        assert_eq!(frame.surface.height, 480);
+    }
+
+    #[test]
+    fn typing_updates_bound_field() {
+        let core = JsonCore::parse(
+            r#"{
+                "initial": {"draft": ""},
+                "update": { "draft_edit": {"draft": "payload"} }
+            }"#,
+        )
+        .unwrap();
+        let view = r#"<text-field text="{draft}" on-input="draft_edit" />"#;
+        let mut s =
+            Session::from_sources(view, core, WindowSpec::default(), Appearance::Light).unwrap();
+        s.key("H").unwrap();
+        s.key("i").unwrap();
+        assert_eq!(s.model().get("draft").unwrap().display(), "Hi");
+        s.key("Backspace").unwrap();
+        assert_eq!(s.model().get("draft").unwrap().display(), "H");
     }
 }
