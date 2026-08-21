@@ -2,6 +2,7 @@
 
 #![forbid(unsafe_code)]
 
+mod host;
 mod preview;
 mod scaffold;
 
@@ -74,6 +75,18 @@ enum Commands {
         #[arg(default_value = ".")]
         path: PathBuf,
     },
+    /// Open a real OS window and present the software-rendered frames.
+    Run {
+        /// App directory.
+        #[arg(default_value = ".")]
+        path: PathBuf,
+        /// Dark tokens.
+        #[arg(long)]
+        dark: bool,
+        /// Present this many frames then exit (smoke / CI). Omit to run until closed.
+        #[arg(long)]
+        frames: Option<u32>,
+    },
     /// Serve a clickable software-rendered preview (no GPU, no display server).
     Preview {
         /// App directory.
@@ -104,6 +117,7 @@ fn run() -> Result<()> {
         Commands::Snapshot { path } => cmd_snapshot(&path),
         Commands::Replay { path, journal, out } => cmd_replay(&path, &journal, out.as_deref()),
         Commands::Test { path } => cmd_test(&path),
+        Commands::Run { path, dark, frames } => host::run(&path, dark, frames),
         Commands::Preview { path, bind, watch } => preview::serve(&path, bind, watch),
     }
 }
