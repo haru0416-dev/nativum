@@ -1,0 +1,6 @@
+{
+  "steps": [
+    { "press": "done", "payload": 1 }
+  ],
+  "assert": { "habits.0.streak": 13 }
+}

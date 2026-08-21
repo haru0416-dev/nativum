@@ -1,0 +1,8 @@
+{
+  "name": "habits",
+  "display_name": "Habits",
+  "version": "0.1.0",
+  "window": { "title": "Habits", "width": 520, "height": 420 },
+  "view": "src/app.native",
+  "core": "src/core.json"
+}

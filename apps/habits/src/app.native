@@ -1,0 +1,31 @@
+<column background="background">
+  <row height="52" padding="12" gap="10" cross="center" background="surface" label="Habits header">
+    <text size="heading" grow="1">habits</text>
+    <button variant="primary" on-press="add">New habit</button>
+  </row>
+  <separator />
+  <column grow="1" gap="12" padding="16">
+    <radio-group gap="8" label="Filter">
+      <for each="filters" as="f">
+        <radio checked="{f == filter}" on-toggle="set_filter:{f}">{f}</radio>
+      </for>
+    </radio-group>
+    <if test="{habit_count}">
+      <scroll grow="1">
+        <column gap="2">
+          <for each="visible" key="id" as="h">
+            <row gap="8" padding="6" cross="center" label="{h.name}">
+              <text grow="1">{h.name}</text>
+              <text>{h.streak} days</text>
+              <button size="sm" on-press="done:{h.id}">Done today</button>
+            </row>
+          </for>
+        </column>
+      </scroll>
+    </if>
+    <else>
+      <alert text="No habits yet - add your first habit." grow="1" />
+    </else>
+  </column>
+  <status-bar>{summaryLine}</status-bar>
+</column>

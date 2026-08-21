@@ -1,0 +1,29 @@
+{
+  "initial": {
+    "filter": "all",
+    "next_id": 4,
+    "filters": ["all", "active"],
+    "habits": [
+      { "id": 1, "name": "Meditate", "streak": 12 },
+      { "id": 2, "name": "Exercise", "streak": 0 },
+      { "id": 3, "name": "Read 20 pages", "streak": 9 }
+    ]
+  },
+  "derived": {
+    "habit_count": "len(habits)",
+    "visible": "if(filter == 'active', filter_where(habits, 'streak', '>', 0), habits)",
+    "summaryLine": "len(habits) ++ ' habits · ' ++ sum(habits, 'streak') ++ ' total days'"
+  },
+  "update": {
+    "add": {
+      "habits": "append(habits, {id: next_id, name: 'Habit ' ++ next_id, streak: 0})",
+      "next_id": "next_id + 1"
+    },
+    "done": {
+      "habits": "set_where(habits, 'id', payload, {streak: get_where(habits, 'id', payload, 'streak') + 1})"
+    },
+    "set_filter": {
+      "filter": "payload"
+    }
+  }
+}

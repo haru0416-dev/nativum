@@ -1,0 +1,8 @@
+{
+  "name": "notes",
+  "display_name": "Notes",
+  "version": "0.1.0",
+  "window": { "title": "Notes", "width": 420, "height": 480 },
+  "view": "src/app.native",
+  "core": "src/core.json"
+}

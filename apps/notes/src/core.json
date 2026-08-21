@@ -1,0 +1,29 @@
+{
+  "initial": {
+    "draft": "",
+    "query": "",
+    "next_id": 3,
+    "notes": [
+      { "id": 1, "title": "Write the renderer", "done": true },
+      { "id": 2, "title": "Ship a counter", "done": false }
+    ]
+  },
+  "derived": {
+    "visible": "if(len(query) == 0, notes, filter_where(notes, 'title', 'contains', query))"
+  },
+  "update": {
+    "draft_edit": { "draft": "payload" },
+    "query_edit": { "query": "payload" },
+    "add": {
+      "notes": "if(len(trim(draft)) == 0, notes, append(notes, {id: next_id, title: trim(draft), done: false}))",
+      "next_id": "if(len(trim(draft)) == 0, next_id, next_id + 1)",
+      "draft": "if(len(trim(draft)) == 0, draft, '')"
+    },
+    "toggle": {
+      "notes": "set_where(notes, 'id', payload, {done: not get_where(notes, 'id', payload, 'done')})"
+    },
+    "remove": {
+      "notes": "remove_where(notes, 'id', payload)"
+    }
+  }
+}
