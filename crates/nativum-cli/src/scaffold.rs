@@ -81,6 +81,7 @@ A nativum app. Three files of truth: `src/app.native`, `src/core.json`, `app.jso
 
 ```sh
 nativum check
+nativum run
 nativum render --out preview.png
 nativum test
 nativum preview
