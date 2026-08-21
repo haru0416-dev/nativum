@@ -13,29 +13,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: cursor/nativum-toolkit-b330
-      - name: Concatenate lock parts when complete
+      - name: Append lock tail parts when complete
         run: |
           set -euo pipefail
           count=$(ls -1 _agent_lock_parts/*.txt 2>/dev/null | wc -l)
           echo "parts=$count"
-          if [ "$count" -lt 7 ]; then
-            echo "Waiting for all 7 parts; have $count"
+          expected=5
+          if [ "$count" -lt "$expected" ]; then
+            echo "Waiting for all $expected parts; have $count"
             exit 0
           fi
-          cat _agent_lock_parts/00.txt _agent_lock_parts/01.txt _agent_lock_parts/02.txt _agent_lock_parts/03.txt _agent_lock_parts/04.txt _agent_lock_parts/05.txt _agent_lock_parts/06.txt > Cargo.lock
+          cp Cargo.lock /tmp/lock.prefix
+          cat /tmp/lock.prefix _agent_lock_parts/00.txt _agent_lock_parts/01.txt _agent_lock_parts/02.txt _agent_lock_parts/03.txt _agent_lock_parts/04.txt > Cargo.lock
           test "$(wc -c < Cargo.lock)" -eq 43052
           python3 - <<'PY2'
           import hashlib
           data=open("Cargo.lock","rb").read()
-          assert hashlib.sha256(data).hexdigest()=="a00be73cc15107c3466afd223656339c1087eac8132b26d6e4003c24a72ccc94"
-          print("sha256 ok")
+          h=hashlib.sha256(data).hexdigest()
+          print(h)
+          assert h=="a00be73cc15107c3466afd223656339c1087eac8132b26d6e4003c24a72ccc94"
           PY2
           rm -rf _agent_lock_parts
           rm -f .github/workflows/assemble-cargo-lock.yml
       - name: Commit assembled Cargo.lock
         run: |
           set -euo pipefail
-          if [ ! -f Cargo.lock ]; then exit 0; fi
           if [ -d _agent_lock_parts ]; then echo "parts still present"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
