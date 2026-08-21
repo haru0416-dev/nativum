@@ -58,13 +58,19 @@ Array helpers exist because list UIs are the point: `append`, `set_where`, `get_
 
 This will look like a well-kerned terminal, not SF Pro. That is acceptable for v0.1: determinism beats fashion. A TTF path (fontdue) is a later token swap, not an engine rewrite.
 
+## Window host
+
+`nativum run` creates an OS window (winit) and presents the RGBA surface (softbuffer). Mouse coordinates are mapped through the scale factor into logical pixels. Keyboard events become `Session::key`. The window title mirrors `count` or `display` when those fields exist.
+
+`nativum run --frames N` presents N frames and exits. That is the CI smoke for “the host actually opened a window.”
+
 ## Preview server
 
 `nativum preview` binds a loopback HTTP server and serves the current PNG. Clicks map through `img.naturalWidth`. This is the development loop in environments without a compositor (CI, cloud agents).
 
 ## Non-goals for v0.1
 
-- Real OS windows (winit / softbuffer is the obvious next host).
+- GPU presentation.
 - Compiling markup out of the binary (proc-macro / `include_str` + parse at build is enough of a plan).
 - A TypeScript core transpiler.
 - WebView, bridge, mobile embed.
@@ -72,6 +78,7 @@ This will look like a well-kerned terminal, not SF Pro. That is acceptable for v
 
 ## Testing contract
 
-- Unit tests in crates cover parse, eval, layout, PNG signature, counter session.
+- Unit tests in crates cover parse, eval, layout, PNG signature, counter session, resize, field typing.
 - App journals in `apps/*/tests/*.json` cover update through the real markup.
 - `nativum check` is the authoring gate: unknown bindings and unknown message tags fail.
+- `nativum run --frames 1` under xvfb is the host smoke.

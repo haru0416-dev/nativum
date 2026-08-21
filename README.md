@@ -25,12 +25,13 @@ cargo install --path crates/nativum-cli
 nativum init my_app
 cd my_app
 nativum check
+nativum run              # real OS window — click and type
 nativum render --out preview.png
 nativum test
 nativum preview          # http://127.0.0.1:8787 — click the frame
 ```
 
-A window-sized PNG is the whole UI. `preview` is an HTTP shell around that PNG so cloud agents and headless boxes can drive the app without a GPU or a display server.
+`nativum run` opens a desktop window and presents the software-rendered frames through the OS (winit + softbuffer). Same pixels, same `update` loop. `preview` is the HTTP shell around that PNG for environments without a display.
 
 The scaffolded counter is three files of truth:
 
@@ -61,11 +62,12 @@ Markup can bind and dispatch. It cannot mutate. Every state change goes through 
 - **Closed markup dialect** close to Native SDK views: `row` / `column` / `for` / `if` / `{bindings}` / `on-press="done:{h.id}"`, design tokens, templates.
 - **Predictable state.** Events produce messages; messages update a JSON model; the view is derived.
 - **Deterministic software renderer.** Rounded rects + a public-domain 8×8 font, PNG-encoded with no compression crate. Same inputs, same bytes.
-- **Headless by default.** `check`, `render`, `snapshot`, `replay`, `test` never open a window.
+- **A real window.** `nativum run` hosts the same surface in an OS window. Clicks and keys become messages.
+- **Headless when you want it.** `check`, `render`, `snapshot`, `replay`, `test` never open a window. `run --frames 1` presents once and exits (CI / xvfb).
 - **Agent-friendly snapshot.** Every frame dumps an accessibility tree with roles, frames, and bound actions.
 - **Showcase apps** in `apps/`: counter, calculator, notes, habits.
 
-Not in v0.1 (on purpose): OS windows, GPU presentation, a TypeScript core transpiler, WebView, packaging. The loop and the pixels come first.
+Not in v0.1 (on purpose): GPU presentation, a TypeScript core transpiler, WebView, packaging. The loop and the pixels come first.
 
 ## Layout
 

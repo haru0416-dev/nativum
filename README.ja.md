@@ -25,23 +25,25 @@ cargo install --path crates/nativum-cli
 nativum init my_app
 cd my_app
 nativum check
+nativum run              # 本物の OS ウィンドウ。クリックとキー入力
 nativum render --out preview.png
 nativum test
 nativum preview          # http://127.0.0.1:8787 — フレームをクリック
 ```
 
-ウィンドウサイズの PNG が UI そのもの。`preview` はその PNG を HTTP で出すので、GPU もディスプレイもないクラウドエージェントからでもアプリを触れる。
+`nativum run` はソフトウェアレンダラのフレームを OS ウィンドウに出す（winit + softbuffer）。ピクセルも `update` も同じ。`preview` はディスプレイがない環境向けの HTTP シェル。
 
 ## v0.1 でできること
 
 - Native SDK のビューに近い **閉じたマークアップ**: `row` / `column` / `for` / `if` / `{bindings}` / `on-press="done:{h.id}"`、デザイントークン、テンプレート。
 - **予測可能な状態。** イベントがメッセージを生み、メッセージが JSON モデルを更新し、ビューは導出される。
 - **決定的なソフトウェアレンダラ。** 角丸矩形 + パブリックドメイン 8×8 フォント。圧縮クレートなしの PNG。入力が同じならバイトも同じ。
-- **デフォルトでヘッドレス。** `check` / `render` / `snapshot` / `replay` / `test` はウィンドウを開かない。
+- **本物のウィンドウ。** `nativum run` が同じサーフェスを OS ウィンドウに出す。クリックとキーがメッセージになる。
+- **ヘッドレスも残す。** `check` / `render` / `snapshot` / `replay` / `test` はウィンドウを開かない。`run --frames 1` は 1 フレーム出して終了（CI / xvfb）。
 - **エージェント向けスナップショット。** 毎フレーム、ロール・フレーム・アクション付きのツリーを吐く。
 - ショーケース: `apps/` の counter, calculator, notes, habits。
 
-v0.1 に入れないもの（意図的）: OS ウィンドウ、GPU 提示、TypeScript コアのトランスパイラ、WebView、パッケージング。ループとピクセルが先。
+V0.1 に入れないもの（意図的）: GPU 提示、TypeScript コアのトランスパイラ、WebView、パッケージング。ループとピクセルが先。
 
 ## ライセンス
 
