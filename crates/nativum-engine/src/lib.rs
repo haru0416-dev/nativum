@@ -17,6 +17,7 @@ mod widget;
 
 pub use core_json::JsonCore;
 pub use manifest::{load_app_dir, LoadedApp, Manifest, WindowSpec};
+pub use paint::Surface;
 pub use session::{Frame, Session, Step};
 pub use snapshot::SnapshotNode;
 pub use widget::{Align, Axis, Handler, Widget, WidgetKind};

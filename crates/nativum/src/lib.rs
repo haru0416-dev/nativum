@@ -7,7 +7,7 @@ pub use nativum_core::{
     Value,
 };
 pub use nativum_engine::{
-    load_app_dir, Frame, JsonCore, LoadedApp, Manifest, Session, SnapshotNode, Step, WindowSpec,
+    load_app_dir, Frame, JsonCore, LoadedApp, Manifest, Session, SnapshotNode, Step, Surface,
+    WindowSpec,
 };
 pub use nativum_markup::{check_document, parse_document, parse_expr, CheckReport, Document};
-
