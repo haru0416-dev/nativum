@@ -1,0 +1,7 @@
+{
+  "steps": [
+    { "press": "increment" },
+    { "press": "increment" }
+  ],
+  "assert": { "count": 2 }
+}

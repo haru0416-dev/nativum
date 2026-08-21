@@ -1,0 +1,9 @@
+{
+  "steps": [
+    { "press": "d1" },
+    { "press": "add" },
+    { "press": "d2" },
+    { "press": "equals" }
+  ],
+  "assert": { "display": "3" }
+}

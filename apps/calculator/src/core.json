@@ -1,0 +1,66 @@
+{
+  "initial": {
+    "display": "0",
+    "acc": 0,
+    "op": "",
+    "fresh": true
+  },
+  "derived": {
+    "addPending": "op == 'add'",
+    "subtractPending": "op == 'subtract'",
+    "multiplyPending": "op == 'multiply'",
+    "dividePending": "op == 'divide'"
+  },
+  "update": {
+    "d0": { "display": "if(fresh, '0', if(display == '0', '0', display ++ '0'))", "fresh": "false" },
+    "d1": { "display": "if(fresh, '1', if(display == '0', '1', display ++ '1'))", "fresh": "false" },
+    "d2": { "display": "if(fresh, '2', if(display == '0', '2', display ++ '2'))", "fresh": "false" },
+    "d3": { "display": "if(fresh, '3', if(display == '0', '3', display ++ '3'))", "fresh": "false" },
+    "d4": { "display": "if(fresh, '4', if(display == '0', '4', display ++ '4'))", "fresh": "false" },
+    "d5": { "display": "if(fresh, '5', if(display == '0', '5', display ++ '5'))", "fresh": "false" },
+    "d6": { "display": "if(fresh, '6', if(display == '0', '6', display ++ '6'))", "fresh": "false" },
+    "d7": { "display": "if(fresh, '7', if(display == '0', '7', display ++ '7'))", "fresh": "false" },
+    "d8": { "display": "if(fresh, '8', if(display == '0', '8', display ++ '8'))", "fresh": "false" },
+    "d9": { "display": "if(fresh, '9', if(display == '0', '9', display ++ '9'))", "fresh": "false" },
+    "dot": { "display": "if(contains(display, '.'), display, display ++ '.')", "fresh": "false" },
+    "clear": { "display": "'0'", "acc": "0", "op": "''", "fresh": "true" },
+    "negate": { "display": "fmt(0 - num(display))" },
+    "percent": { "display": "fmt(num(display) / 100)" },
+    "add": {
+      "acc": "apply(acc, op, num(display))",
+      "display": "fmt(apply(acc, op, num(display)))",
+      "op": "'add'",
+      "fresh": "true"
+    },
+    "subtract": {
+      "acc": "apply(acc, op, num(display))",
+      "display": "fmt(apply(acc, op, num(display)))",
+      "op": "'subtract'",
+      "fresh": "true"
+    },
+    "multiply": {
+      "acc": "apply(acc, op, num(display))",
+      "display": "fmt(apply(acc, op, num(display)))",
+      "op": "'multiply'",
+      "fresh": "true"
+    },
+    "divide": {
+      "acc": "apply(acc, op, num(display))",
+      "display": "fmt(apply(acc, op, num(display)))",
+      "op": "'divide'",
+      "fresh": "true"
+    },
+    "equals": {
+      "display": "fmt(apply(acc, op, num(display)))",
+      "acc": "apply(acc, op, num(display))",
+      "op": "''",
+      "fresh": "true"
+    }
+  },
+  "keys": {
+    "0": "d0", "1": "d1", "2": "d2", "3": "d3", "4": "d4",
+    "5": "d5", "6": "d6", "7": "d7", "8": "d8", "9": "d9",
+    ".": "dot", "Enter": "equals", "+": "add", "-": "subtract",
+    "*": "multiply", "/": "divide", "Escape": "clear"
+  }
+}

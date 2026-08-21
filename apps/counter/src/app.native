@@ -1,0 +1,11 @@
+<column padding="24" gap="20" background="background" grow="1">
+  <text size="heading" foreground="text_muted">counter</text>
+  <text size="display" text-alignment="center">{count}</text>
+  <row gap="8" main="center" cross="center">
+    <button variant="secondary" on-press="decrement" label="decrement">-</button>
+    <button variant="primary" on-press="increment" label="increment">+</button>
+  </row>
+  <row main="center">
+    <button on-press="reset">Reset</button>
+  </row>
+</column>
