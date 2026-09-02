@@ -1,0 +1,7 @@
+{
+  "steps": [
+    { "press": "increment" },
+    { "press": "reset" }
+  ],
+  "assert": { "count": 0 }
+}

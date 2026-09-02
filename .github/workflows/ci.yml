@@ -1,0 +1,47 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.83.0
+        with:
+          components: rustfmt, clippy
+      - name: window libs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libxkbcommon-dev libxkbcommon-x11-0 \
+            libx11-dev libx11-xcb-dev \
+            libxcursor-dev libxrandr-dev libxi-dev \
+            xvfb
+      - name: fmt
+        run: cargo fmt --all -- --check
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: test
+        run: cargo test --workspace
+      - name: build cli
+        run: cargo build -p nativum-cli
+      - name: app journals
+        run: |
+          ./target/debug/nativum check apps/counter
+          ./target/debug/nativum test apps/counter
+          ./target/debug/nativum check apps/calculator
+          ./target/debug/nativum test apps/calculator
+          ./target/debug/nativum check apps/notes
+          ./target/debug/nativum test apps/notes
+          ./target/debug/nativum check apps/habits
+          ./target/debug/nativum test apps/habits
+          ./target/debug/nativum render apps/counter --out /tmp/counter.png
+          xvfb-run -a ./target/debug/nativum run apps/counter --frames 1
+          xvfb-run -a ./target/debug/nativum run apps/calculator --frames 1

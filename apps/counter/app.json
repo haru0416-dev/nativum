@@ -1,0 +1,8 @@
+{
+  "name": "counter",
+  "display_name": "Counter",
+  "version": "0.1.0",
+  "window": { "title": "Counter", "width": 360, "height": 280 },
+  "view": "src/app.native",
+  "core": "src/core.json"
+}

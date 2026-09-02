@@ -1,0 +1,27 @@
+[package]
+name = "nativum-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "CLI for the nativum toolkit: init, check, render, run, snapshot, replay, preview."
+
+[[bin]]
+name = "nativum"
+path = "src/main.rs"
+
+[dependencies]
+nativum-engine.workspace = true
+nativum-markup.workspace = true
+nativum-core.workspace = true
+clap.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+winit.workspace = true
+softbuffer.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,8 @@
+{
+  "name": "calculator",
+  "display_name": "Calculator",
+  "version": "0.1.0",
+  "window": { "title": "Calculator", "width": 320, "height": 420 },
+  "view": "src/app.native",
+  "core": "src/core.json"
+}

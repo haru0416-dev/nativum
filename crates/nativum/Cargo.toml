@@ -1,0 +1,17 @@
+[package]
+name = "nativum"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Native desktop UI toolkit in Rust. Facade crate."
+
+[dependencies]
+nativum-core.workspace = true
+nativum-markup.workspace = true
+nativum-engine.workspace = true
+
+[lints]
+workspace = true

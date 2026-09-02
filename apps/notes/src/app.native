@@ -1,0 +1,25 @@
+<column background="background" grow="1">
+  <row padding="16" gap="8" cross="center" background="surface">
+    <text size="heading" grow="1">notes</text>
+  </row>
+  <separator />
+  <column grow="1" gap="12" padding="16">
+    <row gap="8" cross="center">
+      <text-field text="{draft}" placeholder="New note..." on-input="draft_edit" on-submit="add" grow="1" />
+      <button variant="primary" on-press="add">Add</button>
+    </row>
+    <text-field text="{query}" placeholder="Search" on-input="query_edit" />
+    <scroll grow="1">
+      <column gap="2">
+        <for each="visible" key="id" as="t">
+          <row gap="8" padding="6" cross="center">
+            <checkbox checked="{t.done}" on-toggle="toggle:{t.id}" />
+            <text grow="1">{t.title}</text>
+            <button size="sm" variant="secondary" on-press="remove:{t.id}">x</button>
+          </row>
+        </for>
+      </column>
+    </scroll>
+  </column>
+  <status-bar>{len(notes)} notes</status-bar>
+</column>

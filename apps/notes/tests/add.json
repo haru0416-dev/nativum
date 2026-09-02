@@ -1,0 +1,7 @@
+{
+  "steps": [
+    { "type": "Buy milk" },
+    { "press": "add" }
+  ],
+  "assert": { "notes.2.title": "Buy milk", "draft": "" }
+}

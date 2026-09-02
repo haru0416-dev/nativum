@@ -1,0 +1,9 @@
+{
+  "steps": [
+    { "press": "d6" },
+    { "press": "multiply" },
+    { "press": "d7" },
+    { "press": "equals" }
+  ],
+  "assert": { "display": "42" }
+}

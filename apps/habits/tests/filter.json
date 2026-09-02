@@ -1,0 +1,6 @@
+{
+  "steps": [
+    { "press": "set_filter", "payload": "active" }
+  ],
+  "assert": { "filter": "active" }
+}
